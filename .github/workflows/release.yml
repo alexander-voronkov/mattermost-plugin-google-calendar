@@ -75,6 +75,12 @@ jobs:
         cp webapp/dist/main.js dist/${PLUGIN_ID}/webapp/dist/
         cp -r assets/* dist/${PLUGIN_ID}/assets/
         
+        # Copy public/ directory if it exists (for static assets served by Mattermost)
+        if [ -d "public" ]; then
+          mkdir -p dist/${PLUGIN_ID}/public
+          cp -r public/* dist/${PLUGIN_ID}/public/
+        fi
+        
         cd dist && tar -czf ${PLUGIN_ID}-${VERSION}.tar.gz ${PLUGIN_ID}
         echo "Bundle created: ${PLUGIN_ID}-${VERSION}.tar.gz"
     
