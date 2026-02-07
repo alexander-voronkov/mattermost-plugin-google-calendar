@@ -12,6 +12,7 @@ import Hooks from './plugin_hooks';
 import reducer from './reducers';
 
 import CreateEventModal from './components/modals/create_event_modal';
+import CalendarRHS from './components/rhs/calendar_rhs';
 import {getProviderConfiguration, handleConnectChange, openCreateEventModal} from './actions';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -34,6 +35,22 @@ export default class Plugin {
             // Retrieve provider configuration so we can access names and other options in messages to use in the frontend.
             await store.dispatch(getProviderConfiguration());
 
+            // Register RHS panel
+            const {showRHSPlugin} = registry.registerRightHandSidebarComponent(CalendarRHS, 'Google Calendar');
+
+            // Register app bar button to toggle RHS
+            registry.registerAppBarComponent(
+                `/plugins/${PluginId}/public/app-bar-icon.png`,
+                () => {
+                    store.dispatch({
+                        type: 'TOGGLE_RHS_PLUGIN',
+                        showRHSPlugin,
+                    });
+                    showRHSPlugin();
+                },
+                'Google Calendar',
+            );
+
             registry.registerChannelHeaderMenuAction(
                 <span>{'Create calendar event'}</span>,
                 async (channelID) => {
@@ -41,6 +58,14 @@ export default class Plugin {
                         store.dispatch(openCreateEventModal(channelID));
                     }
                 },
+            );
+
+            // Add channel header button to open RHS
+            registry.registerChannelHeaderButtonAction(
+                <span>📅</span>,
+                showRHSPlugin,
+                'View Calendar',
+                'View your Google Calendar',
             );
 
             registry.registerRootComponent(CreateEventModal);
