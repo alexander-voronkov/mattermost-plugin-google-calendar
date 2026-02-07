@@ -91,6 +91,10 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 				w.Header().Set("Content-Type", "application/json")
 				handler.HandleGetWeekEvents(w, r)
 				return
+			case "/api/v1/events/create":
+				w.Header().Set("Content-Type", "application/json")
+				handler.HandleCreateEvent(w, r)
+				return
 			}
 		}
 	}

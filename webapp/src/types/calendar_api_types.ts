@@ -9,4 +9,5 @@ export type CreateEventPayload = {
     subject: string;
     location?: string;
     channel_id?: string;
+    add_mattermost_call?: boolean; // If true, add Mattermost Calls link to the event
 }

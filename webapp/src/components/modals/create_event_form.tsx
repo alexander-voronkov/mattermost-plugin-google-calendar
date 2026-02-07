@@ -46,6 +46,7 @@ export default function CreateEventForm(props: Props) {
         description: '',
         channel_id: '',
         location: '',
+        add_mattermost_call: true, // Default to adding a call
     });
 
     const setFormValue = <Key extends keyof CreateEventPayload>(name: Key, value: CreateEventPayload[Key]) => {
@@ -254,6 +255,26 @@ const ActualForm = (props: ActualFormProps) => {
                 <ChannelSelector
                     onChange={(selected) => setFormValue('channel_id', selected)}
                 />
+            ),
+        },
+        {
+            label: 'Add Mattermost Call',
+            component: (
+                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                    <input
+                        type="checkbox"
+                        id="add_mattermost_call"
+                        checked={formValues.add_mattermost_call || false}
+                        onChange={(e) => setFormValue('add_mattermost_call', e.target.checked)}
+                        style={{width: '18px', height: '18px', cursor: 'pointer'}}
+                    />
+                    <label 
+                        htmlFor="add_mattermost_call" 
+                        style={{cursor: 'pointer', fontSize: '13px', color: 'var(--center-channel-color-64)'}}
+                    >
+                        Include a Mattermost Calls link in the event
+                    </label>
+                </div>
             ),
         },
 

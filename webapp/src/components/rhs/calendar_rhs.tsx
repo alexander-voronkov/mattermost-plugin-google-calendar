@@ -1,7 +1,9 @@
 import React, {useEffect, useState, useCallback} from 'react';
+import {useDispatch} from 'react-redux';
 
 import {PluginId} from '../../plugin_id';
 import {doFetch} from '../../client';
+import {openCreateEventModal} from '../../actions';
 
 interface CalendarEvent {
     id: string;
@@ -41,6 +43,7 @@ const CalendarRHS: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [view, setView] = useState<ViewType>('today');
     const [connected, setConnected] = useState<boolean | null>(null);
+    const dispatch = useDispatch();
 
     const fetchEvents = useCallback(async (viewType: ViewType) => {
         setLoading(true);
@@ -250,17 +253,34 @@ const CalendarRHS: React.FC = () => {
                 )}
             </div>
 
-            {/* Footer - Create Event hint */}
+            {/* Footer - Create Meeting Button */}
             {connected && (
                 <div style={{
-                    padding: '10px 16px',
+                    padding: '12px 16px',
                     borderTop: '1px solid var(--center-channel-color-08)',
-                    fontSize: '11px',
-                    color: 'var(--center-channel-color-40)',
-                    textAlign: 'center',
                     flexShrink: 0,
                 }}>
-                    💡 Channel menu → Create calendar event
+                    <button
+                        onClick={() => dispatch(openCreateEventModal(''))}
+                        style={{
+                            width: '100%',
+                            padding: '10px 16px',
+                            backgroundColor: 'var(--button-bg)',
+                            color: 'var(--button-color)',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            fontWeight: 500,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                        }}
+                    >
+                        <span>➕</span>
+                        <span>Create Meeting</span>
+                    </button>
                 </div>
             )}
         </div>
