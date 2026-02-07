@@ -40,7 +40,7 @@ export default class Plugin {
 
             // Register app bar button to toggle RHS
             registry.registerAppBarComponent(
-                `/plugins/${PluginId}/public/app-bar-icon.png`,
+                `/plugins/${PluginId}/assets/app-bar-icon.png`,
                 () => {
                     store.dispatch({
                         type: 'TOGGLE_RHS_PLUGIN',
