@@ -41,6 +41,11 @@ jobs:
       with:
         node-version-file: .nvmrc
     
+    - name: Generate manifest files
+      run: |
+        cd build/manifest && go build -o ../bin/manifest .
+        ./build/bin/manifest apply
+    
     - name: Install webapp dependencies
       run: cd webapp && npm ci
     
