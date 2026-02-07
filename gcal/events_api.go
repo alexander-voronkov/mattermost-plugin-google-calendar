@@ -252,7 +252,7 @@ func (h *EventsAPIHandler) HandleCreateEvent(w http.ResponseWriter, r *http.Requ
 	}
 
 	if description != "" {
-		event.Body = &remote.Body{Content: description, ContentType: "text"}
+		event.Body = &remote.ItemBody{Content: description, ContentType: "text"}
 	}
 
 	// Add attendees
