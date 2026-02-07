@@ -35,14 +35,14 @@ export default class Plugin {
             // Retrieve provider configuration so we can access names and other options in messages to use in the frontend.
             await store.dispatch(getProviderConfiguration());
 
-            // Register RHS panel
-            const {showRHSPlugin} = registry.registerRightHandSidebarComponent(CalendarRHS, 'Google Calendar');
-
-            // Register app bar button to toggle RHS
+            // Register app bar button with RHS component
             registry.registerAppBarComponent(
                 `/plugins/${PluginId}/assets/app-bar-icon.png`,
-                showRHSPlugin,
-                'Google Calendar',
+                null, // action - null when using rhsComponent
+                'Google Calendar', // tooltipText
+                null, // supportedProductIds
+                CalendarRHS, // rhsComponent
+                'Google Calendar', // rhsTitle
             );
 
             registry.registerChannelHeaderMenuAction(
@@ -52,14 +52,6 @@ export default class Plugin {
                         store.dispatch(openCreateEventModal(channelID));
                     }
                 },
-            );
-
-            // Add channel header button to open RHS
-            registry.registerChannelHeaderButtonAction(
-                <span>📅</span>,
-                showRHSPlugin,
-                'View Calendar',
-                'View your Google Calendar',
             );
 
             registry.registerRootComponent(CreateEventModal);
