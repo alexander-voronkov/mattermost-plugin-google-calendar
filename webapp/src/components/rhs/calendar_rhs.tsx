@@ -1,100 +1,44 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
-
-import {GlobalState} from '@mattermost/types/lib/store';
 
 import {PluginId} from '../../plugin_id';
 import {doFetch} from '../../client';
 
-interface CalendarEvent {
-    id: string;
-    subject: string;
-    start: string;
-    end: string;
-    location?: string;
-    htmlLink?: string;
-    allDay?: boolean;
+interface UserInfo {
+    connected: boolean;
+    email?: string;
 }
-
-interface ViewResponse {
-    events: CalendarEvent[];
-    error?: string;
-}
-
-type ViewType = 'today' | 'tomorrow' | 'week';
-
-const formatTime = (dateStr: string, allDay?: boolean): string => {
-    if (allDay) {
-        return 'All day';
-    }
-    const date = new Date(dateStr);
-    return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-};
-
-const formatDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString([], {weekday: 'short', month: 'short', day: 'numeric'});
-};
 
 const CalendarRHS: React.FC = () => {
-    const [events, setEvents] = useState<CalendarEvent[]>([]);
+    const [connected, setConnected] = useState<boolean | null>(null);
+    const [email, setEmail] = useState<string>('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [view, setView] = useState<ViewType>('today');
-    const [connected, setConnected] = useState(false);
 
-    const fetchEvents = useCallback(async (viewType: ViewType) => {
+    const checkConnection = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
-            const endpoint = viewType === 'week' ? 'viewcal' : viewType;
-            const data = await doFetch(`/plugins/${PluginId}/api/v1/${endpoint}`, {method: 'GET'});
-            
-            if (data.error) {
-                if (data.error.includes('not connected') || data.error.includes('connect')) {
-                    setConnected(false);
-                    setError('Please connect your Google Calendar first. Use /gcal connect');
-                } else {
-                    setError(data.error);
-                }
-                setEvents([]);
-            } else {
+            const data = await doFetch(`/plugins/${PluginId}/api/v1/me`, {method: 'GET'});
+            if (data && data.email) {
                 setConnected(true);
-                setEvents(data.events || []);
+                setEmail(data.email);
+            } else {
+                setConnected(false);
             }
         } catch (e: any) {
-            if (e.status_code === 401 || e.message?.includes('not connected')) {
+            if (e.status_code === 401 || e.status_code === 404) {
                 setConnected(false);
-                setError('Please connect your Google Calendar. Use /gcal connect');
             } else {
-                setError(e.message || 'Failed to fetch events');
+                setError(e.message || 'Failed to check connection');
             }
-            setEvents([]);
         } finally {
             setLoading(false);
         }
     }, []);
 
     useEffect(() => {
-        fetchEvents(view);
-    }, [view, fetchEvents]);
-
-    const handleRefresh = () => {
-        fetchEvents(view);
-    };
-
-    const getViewTitle = (): string => {
-        switch (view) {
-            case 'today':
-                return 'Today';
-            case 'tomorrow':
-                return 'Tomorrow';
-            case 'week':
-                return 'This Week';
-            default:
-                return '';
-        }
-    };
+        checkConnection();
+    }, [checkConnection]);
 
     return (
         <div style={{
@@ -113,10 +57,10 @@ const CalendarRHS: React.FC = () => {
                 flexShrink: 0,
             }}>
                 <h3 style={{margin: 0, fontSize: '16px', fontWeight: 600}}>
-                    📅 {getViewTitle()}
+                    📅 Google Calendar
                 </h3>
                 <button
-                    onClick={handleRefresh}
+                    onClick={checkConnection}
                     disabled={loading}
                     style={{
                         padding: '4px 8px',
@@ -131,38 +75,11 @@ const CalendarRHS: React.FC = () => {
                 </button>
             </div>
 
-            {/* View Tabs */}
-            <div style={{
-                display: 'flex',
-                borderBottom: '1px solid var(--center-channel-color-08)',
-                flexShrink: 0,
-            }}>
-                {(['today', 'tomorrow', 'week'] as ViewType[]).map((v) => (
-                    <button
-                        key={v}
-                        onClick={() => setView(v)}
-                        style={{
-                            flex: 1,
-                            padding: '8px 12px',
-                            border: 'none',
-                            borderBottom: view === v ? '2px solid var(--button-bg)' : '2px solid transparent',
-                            backgroundColor: 'transparent',
-                            cursor: 'pointer',
-                            fontSize: '13px',
-                            fontWeight: view === v ? 600 : 400,
-                            color: view === v ? 'var(--button-bg)' : 'var(--center-channel-color)',
-                        }}
-                    >
-                        {v.charAt(0).toUpperCase() + v.slice(1)}
-                    </button>
-                ))}
-            </div>
-
             {/* Content */}
             <div style={{
                 flex: 1,
                 overflowY: 'auto',
-                padding: '12px 16px',
+                padding: '16px',
             }}>
                 {loading && (
                     <div style={{textAlign: 'center', padding: '24px', color: 'var(--center-channel-color-56)'}}>
@@ -177,106 +94,131 @@ const CalendarRHS: React.FC = () => {
                         borderRadius: '8px',
                         color: 'var(--error-text)',
                         fontSize: '13px',
+                        marginBottom: '16px',
                     }}>
                         {error}
                     </div>
                 )}
 
-                {!loading && !error && events.length === 0 && (
+                {!loading && connected === false && (
                     <div style={{
                         textAlign: 'center',
                         padding: '24px',
-                        color: 'var(--center-channel-color-56)',
                     }}>
-                        <div style={{fontSize: '32px', marginBottom: '8px'}}>🎉</div>
-                        <div>No events scheduled</div>
+                        <div style={{fontSize: '48px', marginBottom: '16px'}}>🔗</div>
+                        <h4 style={{margin: '0 0 8px 0'}}>Connect Your Calendar</h4>
+                        <p style={{
+                            color: 'var(--center-channel-color-56)',
+                            fontSize: '13px',
+                            marginBottom: '16px',
+                        }}>
+                            Use the slash command to connect:
+                        </p>
+                        <code style={{
+                            display: 'block',
+                            padding: '12px',
+                            backgroundColor: 'var(--center-channel-color-04)',
+                            borderRadius: '4px',
+                            fontSize: '14px',
+                            fontFamily: 'monospace',
+                        }}>
+                            /gcal connect
+                        </code>
                     </div>
                 )}
 
-                {!loading && !error && events.map((event) => (
-                    <div
-                        key={event.id}
-                        style={{
-                            padding: '12px',
-                            marginBottom: '8px',
-                            borderRadius: '8px',
-                            backgroundColor: 'var(--center-channel-color-04)',
-                            border: '1px solid var(--center-channel-color-08)',
-                        }}
-                    >
+                {!loading && connected === true && (
+                    <div>
                         <div style={{
-                            fontWeight: 600,
-                            fontSize: '14px',
-                            marginBottom: '4px',
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: '8px',
+                            padding: '12px',
+                            backgroundColor: 'var(--center-channel-color-04)',
+                            borderRadius: '8px',
+                            marginBottom: '16px',
                         }}>
-                            {event.htmlLink ? (
-                                <a
-                                    href={event.htmlLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{color: 'var(--link-color)', textDecoration: 'none'}}
-                                >
-                                    {event.subject}
-                                </a>
-                            ) : (
-                                <span>{event.subject}</span>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                marginBottom: '8px',
+                            }}>
+                                <span style={{color: '#3db887'}}>✓</span>
+                                <span style={{fontWeight: 600}}>Connected</span>
+                            </div>
+                            {email && (
+                                <div style={{
+                                    fontSize: '12px',
+                                    color: 'var(--center-channel-color-56)',
+                                }}>
+                                    {email}
+                                </div>
                             )}
                         </div>
+
+                        <h4 style={{margin: '0 0 12px 0', fontSize: '14px'}}>Quick Commands</h4>
+                        
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                            <CommandCard 
+                                command="/gcal today"
+                                description="View today's events"
+                            />
+                            <CommandCard 
+                                command="/gcal tomorrow"
+                                description="View tomorrow's events"
+                            />
+                            <CommandCard 
+                                command="/gcal viewcal"
+                                description="View this week's events"
+                            />
+                            <CommandCard 
+                                command="/gcal settings"
+                                description="Configure preferences"
+                            />
+                        </div>
+
                         <div style={{
+                            marginTop: '24px',
+                            padding: '12px',
+                            backgroundColor: 'var(--center-channel-color-04)',
+                            borderRadius: '8px',
                             fontSize: '12px',
                             color: 'var(--center-channel-color-56)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
                         }}>
-                            <span>🕐 {formatTime(event.start, event.allDay)}</span>
-                            {!event.allDay && (
-                                <>
-                                    <span>→</span>
-                                    <span>{formatTime(event.end)}</span>
-                                </>
-                            )}
+                            💡 <strong>Tip:</strong> Use the channel header menu to create calendar events directly from any channel.
                         </div>
-                        {view === 'week' && (
-                            <div style={{
-                                fontSize: '11px',
-                                color: 'var(--center-channel-color-40)',
-                                marginTop: '4px',
-                            }}>
-                                📆 {formatDate(event.start)}
-                            </div>
-                        )}
-                        {event.location && (
-                            <div style={{
-                                fontSize: '12px',
-                                color: 'var(--center-channel-color-56)',
-                                marginTop: '4px',
-                            }}>
-                                📍 {event.location}
-                            </div>
-                        )}
                     </div>
-                ))}
+                )}
             </div>
-
-            {/* Footer */}
-            {connected && (
-                <div style={{
-                    padding: '8px 16px',
-                    borderTop: '1px solid var(--center-channel-color-08)',
-                    fontSize: '11px',
-                    color: 'var(--center-channel-color-40)',
-                    textAlign: 'center',
-                    flexShrink: 0,
-                }}>
-                    ✅ Connected to Google Calendar
-                </div>
-            )}
         </div>
     );
 };
+
+interface CommandCardProps {
+    command: string;
+    description: string;
+}
+
+const CommandCard: React.FC<CommandCardProps> = ({command, description}) => (
+    <div style={{
+        padding: '10px 12px',
+        backgroundColor: 'var(--center-channel-color-04)',
+        borderRadius: '6px',
+        border: '1px solid var(--center-channel-color-08)',
+    }}>
+        <code style={{
+            fontSize: '13px',
+            fontFamily: 'monospace',
+            color: 'var(--button-bg)',
+        }}>
+            {command}
+        </code>
+        <div style={{
+            fontSize: '12px',
+            color: 'var(--center-channel-color-56)',
+            marginTop: '4px',
+        }}>
+            {description}
+        </div>
+    </div>
+);
 
 export default CalendarRHS;
