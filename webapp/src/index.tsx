@@ -41,13 +41,7 @@ export default class Plugin {
             // Register app bar button to toggle RHS
             registry.registerAppBarComponent(
                 `/plugins/${PluginId}/assets/app-bar-icon.png`,
-                () => {
-                    store.dispatch({
-                        type: 'TOGGLE_RHS_PLUGIN',
-                        showRHSPlugin,
-                    });
-                    showRHSPlugin();
-                },
+                showRHSPlugin,
                 'Google Calendar',
             );
 
