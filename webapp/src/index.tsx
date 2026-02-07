@@ -36,10 +36,9 @@ export default class Plugin {
             await store.dispatch(getProviderConfiguration());
 
             // Register app bar button with RHS component
-            // Using data URL because Mattermost doesn't serve plugin assets directly
-            const iconDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAB3UlEQVR4Ae2WA4ydQRSFq7hxbdsOardhGTaqbdtug9q2G9bm2rZt79k9Se7anNmdL/mt8w3uew0MdRCDYdxeNJlwKGHPhEPxdtkLamJpvcS2yKXNEps3rRbbzSyXwMRDcSvkxbUtIEurxbYryizAlldLgIuNVXkEoJoAFyNgBIxALkagqkl736S0RWkBI2AEnlkkYcG1KEw/G4FFt6LxxzMVRREYnY4dz2Nx/0+iOgJ3fiaizYZgcOmwKXf71iYZeXnvmIx+u0PB62sfxqghEJ+ciZGHwtBrZwisfVORnJYJti5DTjgRDoGtLpJKCZC0DMArLD3fcfftIei8JQTC7PORmHwqnHLqCeSFPXDlawIYknNCCInNAMV+uqeoK7DsTjTY8gw45lg4GDo/GgjIJOWc+OScopeAwBLK8c9KFBGfob4AQ7K+52Xj4xgG5e+D2gIMxNaefzESeWHFYdBvrilqCxBWG4Zi6D0vY1n/eYxBe0NZlZQXYLWRFpeFxxxWek1i+4A0Vh4KmX+jWgsYgVZ7R6G0ZdjD2VW6hE4cXvIyafgZbQUkvJYCEl5LAQmvpYCE10yg8uFFIK52BCofXgRu1IKAhK88zfeOa9pq36gt2UG9akyA4esfBoMhCz+uoIWaiQpKAAAAAElFTkSuQmCC';
+            // Mattermost serves /public/ but not /assets/
             registry.registerAppBarComponent(
-                iconDataUrl,
+                `/plugins/${PluginId}/public/app-bar-icon.png`,
                 null, // action - null when using rhsComponent
                 'Google Calendar', // tooltipText
                 null, // supportedProductIds
