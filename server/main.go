@@ -6,7 +6,7 @@ package main
 import (
 	mattermostplugin "github.com/mattermost/mattermost/server/public/plugin"
 
-	"github.com/mattermost/mattermost-plugin-google-calendar/gcal"
+	"github.com/alexander-voronkov/mattermost-plugin-google-calendar/gcal"
 	"github.com/mattermost/mattermost-plugin-mscalendar/calendar/config"
 	"github.com/mattermost/mattermost-plugin-mscalendar/calendar/engine"
 	"github.com/mattermost/mattermost-plugin-mscalendar/calendar/plugin"

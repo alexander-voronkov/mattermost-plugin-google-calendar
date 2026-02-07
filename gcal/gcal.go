@@ -10,7 +10,7 @@ import (
 const (
 	ProviderGCal            = "gcal"
 	ProviderGCalDisplayName = "Google Calendar"
-	ProviderGCalRepository  = "https://github.com/mattermost/mattermost-plugin-google-calendar"
+	ProviderGCalRepository  = "https://github.com/alexander-voronkov/mattermost-plugin-google-calendar"
 )
 
 func GetGcalProviderConfig() config.ProviderConfig {

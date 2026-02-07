@@ -1,28 +1,49 @@
-name: ci
+name: CI
+
 on:
-  schedule:
-    - cron: "0 0 * * *"
   push:
     branches:
+      - main
       - master
-    tags:
-      - "v*"
   pull_request:
-
-permissions:
-  contents: read
-  id-token: write
+  workflow_dispatch:
 
 jobs:
-  plugin-ci:
-    uses: mattermost/actions-workflows/.github/workflows/plugin-ci.yml@main
-    secrets: inherit
-    with:
-      golang-version: "1.24.6"
-  
-  dist:
-    uses: mattermost/actions-workflows/.github/workflows/plugin-dist-pr.yml@main
-    secrets: inherit
-    with:
-      dist-target: "dist"
-      s3-prefix: "mattermost-plugin-google-calendar"
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+
+    - name: Install webapp dependencies
+      run: cd webapp && npm ci
+
+    - name: Build webapp
+      run: cd webapp && npm run build
+
+    - name: Build server (Linux amd64)
+      run: |
+        mkdir -p server/dist
+        cd server && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o dist/plugin-linux-amd64 .
+
+    - name: Build server (Linux arm64)
+      run: |
+        cd server && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -o dist/plugin-linux-arm64 .
+
+    - name: Build summary
+      run: |
+        echo "## Build Complete! ✅" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- Webapp: ✅" >> $GITHUB_STEP_SUMMARY
+        echo "- Server (linux-amd64): ✅" >> $GITHUB_STEP_SUMMARY
+        echo "- Server (linux-arm64): ✅" >> $GITHUB_STEP_SUMMARY

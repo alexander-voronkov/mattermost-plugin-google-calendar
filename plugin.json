@@ -1,11 +1,12 @@
 {
-    "id": "com.mattermost.gcal",
-    "name": "Google Calendar",
-    "description": "Google Calendar Integration",
-    "homepage_url": "https://github.com/mattermost/mattermost-plugin-google-calendar",
-    "support_url": "https://github.com/mattermost/mattermost-plugin-google-calendar/issues",
+    "id": "com.fambear.gcal-rhs",
+    "name": "Google Calendar RHS",
+    "version": "0.1.0",
+    "description": "Google Calendar Integration with Right-Hand Sidebar panel",
+    "homepage_url": "https://github.com/alexander-voronkov/mattermost-plugin-google-calendar",
+    "support_url": "https://github.com/alexander-voronkov/mattermost-plugin-google-calendar/issues",
     "icon_path": "assets/profile-gcal.svg",
-    "min_server_version": "10.7.0",
+    "min_server_version": "10.0.0",
     "server": {
         "executables": {
             "darwin-amd64": "server/dist/plugin-darwin-amd64",

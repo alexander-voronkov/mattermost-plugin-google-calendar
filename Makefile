@@ -25,7 +25,7 @@ GO_PACKAGES ?= ./server/... ./gcal/...
 ASSETS_DIR ?= assets
 
 # Repository URL
-REPOSITORY_URL ?= github.com/mattermost/mattermost-plugin-google-calendar
+REPOSITORY_URL ?= github.com/alexander-voronkov/mattermost-plugin-google-calendar
 
 ## Define the default target (make all)
 .PHONY: default

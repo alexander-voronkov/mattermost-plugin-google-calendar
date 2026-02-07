@@ -1,4 +1,4 @@
-module github.com/mattermost/mattermost-plugin-google-calendar
+module github.com/alexander-voronkov/mattermost-plugin-google-calendar
 
 go 1.24.6
 
