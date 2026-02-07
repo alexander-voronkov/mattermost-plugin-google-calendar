@@ -27,7 +27,9 @@ jobs:
 
     - name: Generate manifest files
       run: |
-        cd build/manifest && go build -o ../bin/manifest .
+        mkdir -p build/bin
+        cd build/manifest && go build -o ../../build/bin/manifest .
+        cd ../..
         ./build/bin/manifest apply
 
     - name: Install webapp dependencies
