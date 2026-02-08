@@ -76,11 +76,21 @@ export default function CreateEventForm(props: Props) {
             e.preventDefault();
         }
 
-        // add required field validation
+        // Auto-fill end_time if empty (start + 30 min)
+        let submitValues = {...formValues};
+        if (!submitValues.end_time && submitValues.start_time) {
+            const [hours, minutes] = submitValues.start_time.split(':').map(Number);
+            if (!isNaN(hours) && !isNaN(minutes)) {
+                const endMinutes = (hours * 60 + minutes + 30) % (24 * 60);
+                const endHours = Math.floor(endMinutes / 60);
+                const endMins = endMinutes % 60;
+                submitValues.end_time = `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
+            }
+        }
 
         setSubmitting(true);
 
-        const response = (await dispatch(createCalendarEvent(formValues))) as CreateCalendarEventResponse;
+        const response = (await dispatch(createCalendarEvent(submitValues))) as CreateCalendarEventResponse;
         if (response.error) {
             handleError(response.error);
             return;
@@ -161,20 +171,22 @@ type ActualFormProps = {
     setFormValue: <Key extends keyof CreateEventPayload>(name: Key, value: CreateEventPayload[Key]) => Promise<{ error?: string }>;
 }
 
+// Calculate time + 30 minutes
+const calcEndTime = (startTime: string): string => {
+    if (!startTime || !startTime.includes(':')) return '';
+    const [hours, minutes] = startTime.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return '';
+    const endMinutes = (hours * 60 + minutes + 30) % (24 * 60);
+    const endHours = Math.floor(endMinutes / 60);
+    const endMins = endMinutes % 60;
+    return `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
+};
+
 const ActualForm = (props: ActualFormProps) => {
     const {formValues, setFormValue} = props;
 
-    // Auto-set end time when start time changes (30 min later)
-    const handleStartTimeChange = (value: string) => {
-        setFormValue('start_time', value);
-        if (value && !formValues.end_time) {
-            const [hours, minutes] = value.split(':').map(Number);
-            const endMinutes = (hours * 60 + minutes + 30) % (24 * 60);
-            const endHours = Math.floor(endMinutes / 60);
-            const endMins = endMinutes % 60;
-            setFormValue('end_time', `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`);
-        }
-    };
+    // Suggested end time (start + 30 min), shown as placeholder
+    const suggestedEndTime = calcEndTime(formValues.start_time);
 
     return (
         <div className='mscalendar-create-event-form' style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
@@ -211,7 +223,7 @@ const ActualForm = (props: ActualFormProps) => {
                     </label>
                     <input
                         type='time'
-                        onChange={(e) => handleStartTimeChange(e.target.value)}
+                        onChange={(e) => setFormValue('start_time', e.target.value)}
                         value={formValues.start_time}
                         className='form-control'
                         style={{height: '36px', colorScheme: 'dark'}}
@@ -220,7 +232,11 @@ const ActualForm = (props: ActualFormProps) => {
                 <span style={{paddingBottom: '8px', color: 'var(--center-channel-color-56)'}}>–</span>
                 <div style={{flex: '0 0 95px'}}>
                     <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '13px'}}>
-                        End <span className='error-text'>*</span>
+                        End {!formValues.end_time && suggestedEndTime ? (
+                            <span style={{fontWeight: 400, opacity: 0.5, fontSize: '11px'}}>({suggestedEndTime})</span>
+                        ) : (
+                            <span className='error-text'>*</span>
+                        )}
                     </label>
                     <input
                         type='time'
