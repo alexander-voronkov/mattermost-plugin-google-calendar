@@ -177,7 +177,7 @@ const ActualForm = (props: ActualFormProps) => {
     };
 
     return (
-        <div className='mscalendar-create-event-form' style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+        <div className='mscalendar-create-event-form' style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
             {/* Subject */}
             <Setting label='Subject' inputId='subject' required={true}>
                 <input
@@ -191,9 +191,9 @@ const ActualForm = (props: ActualFormProps) => {
             </Setting>
 
             {/* Date & Time Row */}
-            <div style={{display: 'flex', gap: '12px', alignItems: 'flex-end', flexWrap: 'wrap'}}>
-                <div style={{flex: '1 1 140px', minWidth: '140px'}}>
-                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px'}}>
+            <div style={{display: 'flex', gap: '8px', alignItems: 'flex-end', flexWrap: 'wrap'}}>
+                <div style={{flex: '1 1 130px', minWidth: '130px'}}>
+                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '13px'}}>
                         Date <span className='error-text'>*</span>
                     </label>
                     <input
@@ -202,11 +202,11 @@ const ActualForm = (props: ActualFormProps) => {
                         value={formValues.date}
                         className='form-control'
                         type='date'
-                        style={{height: '38px'}}
+                        style={{height: '36px'}}
                     />
                 </div>
-                <div style={{flex: '0 0 100px'}}>
-                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px'}}>
+                <div style={{flex: '0 0 95px'}}>
+                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '13px'}}>
                         Start <span className='error-text'>*</span>
                     </label>
                     <input
@@ -214,12 +214,12 @@ const ActualForm = (props: ActualFormProps) => {
                         onChange={(e) => handleStartTimeChange(e.target.value)}
                         value={formValues.start_time}
                         className='form-control'
-                        style={{height: '38px'}}
+                        style={{height: '36px'}}
                     />
                 </div>
-                <span style={{paddingBottom: '10px', color: 'var(--center-channel-color-56)'}}>—</span>
-                <div style={{flex: '0 0 100px'}}>
-                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px'}}>
+                <span style={{paddingBottom: '8px', color: 'var(--center-channel-color-56)'}}>–</span>
+                <div style={{flex: '0 0 95px'}}>
+                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '13px'}}>
                         End <span className='error-text'>*</span>
                     </label>
                     <input
@@ -227,22 +227,11 @@ const ActualForm = (props: ActualFormProps) => {
                         onChange={(e) => setFormValue('end_time', e.target.value)}
                         value={formValues.end_time}
                         className='form-control'
-                        style={{height: '38px'}}
+                        style={{height: '36px'}}
                         min={formValues.start_time || undefined}
                     />
                 </div>
             </div>
-
-            {/* Location */}
-            <Setting label='Location' inputId='location'>
-                <input
-                    id='location'
-                    onChange={(e) => setFormValue('location', e.target.value)}
-                    value={formValues.location}
-                    className='form-control'
-                    placeholder='Add location'
-                />
-            </Setting>
 
             {/* Guests */}
             <Setting label='Guests' inputId='guests'>
@@ -275,8 +264,8 @@ const ActualForm = (props: ActualFormProps) => {
             <div style={{
                 display: 'flex', 
                 alignItems: 'center', 
-                gap: '10px',
-                padding: '10px 12px',
+                gap: '8px',
+                padding: '8px 10px',
                 backgroundColor: 'var(--center-channel-color-04)',
                 borderRadius: '4px',
                 border: '1px solid var(--center-channel-color-08)',
