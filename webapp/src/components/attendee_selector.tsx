@@ -11,6 +11,9 @@ import {getStyleForReactSelect} from '@/utils/styles';
 type SelectOption = {
     label: string;
     value: string;
+    username?: string;
+    email?: string;
+    avatarUrl?: string;
 }
 
 type Props = {
@@ -31,13 +34,16 @@ export default function AttendeeSelector(props: Props) {
             // Search all Mattermost users
             const users = await Client4.searchUsers(input, {});
             
-            return users.map((user) => ({
-                label: `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username,
-                value: user.email || `${user.username}@mattermost.local`,
-                // Store additional info for display
-                username: user.username,
-                email: user.email,
-            })).filter((opt) => opt.value); // Only users with email
+            return users
+                .filter((user) => !user.is_bot) // Exclude bots
+                .filter((user) => user.email) // Must have email
+                .map((user) => ({
+                    label: `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username,
+                    value: user.email!,
+                    username: user.username,
+                    email: user.email,
+                    avatarUrl: Client4.getProfilePictureUrl(user.id, user.last_picture_update || 0),
+                }));
         } catch (error) {
             console.error('Failed to search users:', error);
             return [];
@@ -54,12 +60,38 @@ export default function AttendeeSelector(props: Props) {
         props.onChange(options.map((option) => option.value));
     };
 
-    const formatOptionLabel = (option: SelectOption & { username?: string; email?: string }) => {
+    const formatOptionLabel = (option: SelectOption, context: { context: 'menu' | 'value' }) => {
+        // Compact view for selected values
+        if (context.context === 'value') {
+            return (
+                <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
+                    {option.avatarUrl && (
+                        <img 
+                            src={option.avatarUrl} 
+                            alt="" 
+                            style={{width: '18px', height: '18px', borderRadius: '50%'}}
+                        />
+                    )}
+                    <span>{option.label}</span>
+                </div>
+            );
+        }
+        
+        // Full view for dropdown menu
         if (option.username) {
             return (
-                <div style={{display: 'flex', flexDirection: 'column', lineHeight: 1.3}}>
-                    <span style={{fontWeight: 500}}>{option.label}</span>
-                    <span style={{fontSize: '12px', opacity: 0.7}}>@{option.username} • {option.email}</span>
+                <div style={{display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 0'}}>
+                    {option.avatarUrl && (
+                        <img 
+                            src={option.avatarUrl} 
+                            alt="" 
+                            style={{width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0}}
+                        />
+                    )}
+                    <div style={{display: 'flex', flexDirection: 'column', lineHeight: 1.3, minWidth: 0}}>
+                        <span style={{fontWeight: 500}}>{option.label}</span>
+                        <span style={{fontSize: '12px', opacity: 0.7}}>@{option.username} • {option.email}</span>
+                    </div>
                 </div>
             );
         }
