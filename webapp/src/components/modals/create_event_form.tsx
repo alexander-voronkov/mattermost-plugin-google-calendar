@@ -18,7 +18,6 @@ import FormButton from '@/components/form_button';
 import Loading from '@/components/loading';
 import Setting from '@/components/setting';
 import AttendeeSelector from '@/components/attendee_selector';
-import TimeSelector from '@/components/time_selector';
 import {capitalizeFirstCharacter} from '@/utils/text';
 import {CreateCalendarEventResponse, createCalendarEvent} from '@/actions';
 import {getTodayString} from '@/utils/datetime';
@@ -165,133 +164,137 @@ type ActualFormProps = {
 const ActualForm = (props: ActualFormProps) => {
     const {formValues, setFormValue} = props;
 
-    const theme = useSelector(getTheme);
+    // Auto-set end time when start time changes (30 min later)
+    const handleStartTimeChange = (value: string) => {
+        setFormValue('start_time', value);
+        if (value && !formValues.end_time) {
+            const [hours, minutes] = value.split(':').map(Number);
+            const endMinutes = (hours * 60 + minutes + 30) % (24 * 60);
+            const endHours = Math.floor(endMinutes / 60);
+            const endMins = endMinutes % 60;
+            setFormValue('end_time', `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`);
+        }
+    };
 
-    const components = [
-        {
-            label: 'Subject',
-            required: true,
-            component: (
+    return (
+        <div className='mscalendar-create-event-form' style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+            {/* Subject */}
+            <Setting label='Subject' inputId='subject' required={true}>
                 <input
+                    id='subject'
                     onChange={(e) => setFormValue('subject', e.target.value)}
                     value={formValues.subject}
                     className='form-control'
+                    placeholder='Add title'
+                    autoFocus={true}
                 />
-            ),
-        },
-        {
-            label: 'Location (optional)',
-            required: false,
-            component: (
+            </Setting>
+
+            {/* Date & Time Row */}
+            <div style={{display: 'flex', gap: '12px', alignItems: 'flex-end', flexWrap: 'wrap'}}>
+                <div style={{flex: '1 1 140px', minWidth: '140px'}}>
+                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px'}}>
+                        Date <span className='error-text'>*</span>
+                    </label>
+                    <input
+                        onChange={(e) => setFormValue('date', e.target.value)}
+                        min={getTodayString()}
+                        value={formValues.date}
+                        className='form-control'
+                        type='date'
+                        style={{height: '38px'}}
+                    />
+                </div>
+                <div style={{flex: '0 0 100px'}}>
+                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px'}}>
+                        Start <span className='error-text'>*</span>
+                    </label>
+                    <input
+                        type='time'
+                        onChange={(e) => handleStartTimeChange(e.target.value)}
+                        value={formValues.start_time}
+                        className='form-control'
+                        style={{height: '38px'}}
+                    />
+                </div>
+                <span style={{paddingBottom: '10px', color: 'var(--center-channel-color-56)'}}>—</span>
+                <div style={{flex: '0 0 100px'}}>
+                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px'}}>
+                        End <span className='error-text'>*</span>
+                    </label>
+                    <input
+                        type='time'
+                        onChange={(e) => setFormValue('end_time', e.target.value)}
+                        value={formValues.end_time}
+                        className='form-control'
+                        style={{height: '38px'}}
+                        min={formValues.start_time || undefined}
+                    />
+                </div>
+            </div>
+
+            {/* Location */}
+            <Setting label='Location' inputId='location'>
                 <input
+                    id='location'
                     onChange={(e) => setFormValue('location', e.target.value)}
                     value={formValues.location}
                     className='form-control'
+                    placeholder='Add location'
                 />
-            ),
-        },
-        {
-            label: 'Guests (optional)',
-            component: (
+            </Setting>
+
+            {/* Guests */}
+            <Setting label='Guests' inputId='guests'>
                 <AttendeeSelector
                     onChange={(selected) => setFormValue('attendees', selected)}
                 />
-            ),
-        },
-        {
-            label: 'Date',
-            required: true,
-            component: (
-                <input
-                    onChange={(e) => {
-                        setFormValue('date', e.target.value);
-                        setFormValue('start_time', '');
-                        setFormValue('end_time', '');
-                    }}
-                    min={getTodayString()}
-                    value={formValues.date}
-                    className='form-control'
-                    type='date'
-                />
-            ),
-        },
-        {
-            label: 'Start Time',
-            required: true,
-            component: (
-                <TimeSelector
-                    value={formValues.start_time}
-                    endTime={formValues.end_time}
-                    date={formValues.date}
-                    onChange={(name: keyof CreateEventPayload, value: string) => setFormValue(name, value)}
-                />
-            ),
-        },
-        {
-            label: 'End Time',
-            required: true,
-            component: (
-                <TimeSelector
-                    value={formValues.end_time}
-                    startTime={formValues.start_time}
-                    date={formValues.date}
-                    onChange={(name: keyof CreateEventPayload, value: string) => setFormValue(name, value)}
-                />
-            ),
-        },
-        {
-            label: 'Description (optional)',
-            component: (
+            </Setting>
+
+            {/* Description */}
+            <Setting label='Description' inputId='description'>
                 <textarea
+                    id='description'
                     onChange={(e) => setFormValue('description', e.target.value)}
                     value={formValues.description}
                     className='form-control'
+                    placeholder='Add description'
+                    rows={3}
+                    style={{resize: 'vertical', minHeight: '60px'}}
                 />
-            ),
-        },
-        {
-            label: 'Link event to channel (optional)',
-            component: (
+            </Setting>
+
+            {/* Channel Link */}
+            <Setting label='Link to channel' inputId='channel'>
                 <ChannelSelector
                     onChange={(selected) => setFormValue('channel_id', selected)}
                 />
-            ),
-        },
-        {
-            label: 'Add Mattermost Call',
-            component: (
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                    <input
-                        type="checkbox"
-                        id="add_mattermost_call"
-                        checked={formValues.add_mattermost_call || false}
-                        onChange={(e) => setFormValue('add_mattermost_call', e.target.checked)}
-                        style={{width: '18px', height: '18px', cursor: 'pointer'}}
-                    />
-                    <label 
-                        htmlFor="add_mattermost_call" 
-                        style={{cursor: 'pointer', fontSize: '13px', color: 'var(--center-channel-color-64)'}}
-                    >
-                        Include a Mattermost Calls link in the event
-                    </label>
-                </div>
-            ),
-        },
+            </Setting>
 
-    ];
-
-    return (
-        <div className='mscalendar-create-event-form'>
-            {components.map((c) => (
-                <Setting
-                    key={c.label}
-                    label={c.label}
-                    inputId={c.label}
-                    required={c.required}
+            {/* Mattermost Call checkbox */}
+            <div style={{
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '10px',
+                padding: '10px 12px',
+                backgroundColor: 'var(--center-channel-color-04)',
+                borderRadius: '4px',
+                border: '1px solid var(--center-channel-color-08)',
+            }}>
+                <input
+                    type="checkbox"
+                    id="add_mattermost_call"
+                    checked={formValues.add_mattermost_call || false}
+                    onChange={(e) => setFormValue('add_mattermost_call', e.target.checked)}
+                    style={{width: '18px', height: '18px', cursor: 'pointer', flexShrink: 0}}
+                />
+                <label 
+                    htmlFor="add_mattermost_call" 
+                    style={{cursor: 'pointer', fontSize: '14px', margin: 0}}
                 >
-                    {c.component}
-                </Setting>
-            ))}
+                    📞 Add Mattermost Call link
+                </label>
+            </div>
         </div>
     );
 };

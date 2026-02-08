@@ -28,17 +28,13 @@ export default function Setting(props: Props) {
                 <label
                     className='control-label margin-bottom x2'
                     htmlFor={inputId}
+                    style={{display: 'inline-flex', alignItems: 'center', gap: '4px'}}
                 >
                     {label}
+                    {required && !hideRequiredStar &&
+                        <span className='error-text'>{'*'}</span>
+                    }
                 </label>
-            }
-            {required && !hideRequiredStar &&
-                <span
-                    className='error-text'
-                    style={{marginLeft: '3px'}}
-                >
-                    {'*'}
-                </span>
             }
             <div>
                 {children}
