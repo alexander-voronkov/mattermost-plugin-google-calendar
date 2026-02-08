@@ -202,7 +202,7 @@ const ActualForm = (props: ActualFormProps) => {
                         value={formValues.date}
                         className='form-control'
                         type='date'
-                        style={{height: '36px'}}
+                        style={{height: '36px', colorScheme: 'dark'}}
                     />
                 </div>
                 <div style={{flex: '0 0 95px'}}>
@@ -214,7 +214,7 @@ const ActualForm = (props: ActualFormProps) => {
                         onChange={(e) => handleStartTimeChange(e.target.value)}
                         value={formValues.start_time}
                         className='form-control'
-                        style={{height: '36px'}}
+                        style={{height: '36px', colorScheme: 'dark'}}
                     />
                 </div>
                 <span style={{paddingBottom: '8px', color: 'var(--center-channel-color-56)'}}>–</span>
@@ -227,7 +227,7 @@ const ActualForm = (props: ActualFormProps) => {
                         onChange={(e) => setFormValue('end_time', e.target.value)}
                         value={formValues.end_time}
                         className='form-control'
-                        style={{height: '36px'}}
+                        style={{height: '36px', colorScheme: 'dark'}}
                         min={formValues.start_time || undefined}
                     />
                 </div>
