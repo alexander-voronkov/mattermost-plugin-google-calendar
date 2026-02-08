@@ -4,11 +4,17 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"sync"
 
+	"github.com/mattermost/mattermost/server/public/model"
 	"github.com/mattermost/mattermost/server/public/plugin"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+	"google.golang.org/api/calendar/v3"
+	"google.golang.org/api/people/v1"
 
 	"github.com/alexander-voronkov/mattermost-plugin-google-calendar/gcal"
 	"github.com/mattermost/mattermost-plugin-mscalendar/calendar/config"
@@ -63,9 +69,63 @@ func (p *Plugin) OnConfigurationChange() error {
 	return nil
 }
 
+// handleOAuth2Connect intercepts the OAuth connect flow to add prompt=consent
+// This ensures Google always returns a refresh token, not just on first auth
+func (p *Plugin) handleOAuth2Connect(w http.ResponseWriter, r *http.Request) {
+	mattermostUserID := r.Header.Get("Mattermost-User-ID")
+	if mattermostUserID == "" {
+		http.Error(w, "Not authorized", http.StatusUnauthorized)
+		return
+	}
+
+	// Check if user is already connected
+	user, err := p.env.Store.LoadUser(mattermostUserID)
+	if err == nil && user != nil {
+		http.Error(w, fmt.Sprintf(`{"error":"user is already connected to %s"}`, user.Remote.Mail), http.StatusBadRequest)
+		return
+	}
+
+	// Create OAuth2 config
+	pluginURL := p.env.Config.PluginURL
+	conf := &oauth2.Config{
+		ClientID:     p.env.Config.OAuth2ClientID,
+		ClientSecret: p.env.Config.OAuth2ClientSecret,
+		RedirectURL:  pluginURL + config.FullPathOAuth2Redirect,
+		Scopes: []string{
+			calendar.CalendarScope,
+			calendar.CalendarSettingsReadonlyScope,
+			people.UserinfoEmailScope,
+			people.UserinfoProfileScope,
+		},
+		Endpoint: google.Endpoint,
+	}
+
+	// Generate state
+	state := fmt.Sprintf("%v_%v", model.NewId()[0:15], mattermostUserID)
+	err = p.env.Store.StoreOAuth2State(state)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Generate auth URL with prompt=consent to always get refresh token
+	url := conf.AuthCodeURL(state, 
+		oauth2.AccessTypeOffline,
+		oauth2.SetAuthURLParam("prompt", "consent"),
+	)
+	
+	http.Redirect(w, r, url, http.StatusFound)
+}
+
 // ServeHTTP handles HTTP requests
 func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
+	
+	// Intercept OAuth connect to add prompt=consent for refresh token
+	if path == "/oauth2/connect" {
+		p.handleOAuth2Connect(w, r)
+		return
+	}
 	
 	// Handle events API routes
 	if strings.HasPrefix(path, "/api/v1/events") {
