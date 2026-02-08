@@ -53,9 +53,15 @@ const CalendarRHS: React.FC = () => {
             const data: EventsResponse = await doFetch(`/plugins/${PluginId}/api/v1/events/${endpoint}`, {method: 'GET'});
             
             if (data.error) {
-                if (data.error.includes('not connected') || data.error.includes('user not found') || data.error.includes('token')) {
+                const errLower = data.error.toLowerCase();
+                if (errLower.includes('not connected') || 
+                    errLower.includes('user not found') || 
+                    errLower.includes('token') ||
+                    errLower.includes('not authorized') ||
+                    errLower.includes('unauthorized') ||
+                    errLower.includes('not logged in') ||
+                    errLower.includes('oauth')) {
                     setConnected(false);
-                    setError('Connect your Google Calendar to see events');
                 } else {
                     setError(data.error);
                 }
