@@ -71,9 +71,14 @@ const CalendarRHS: React.FC = () => {
                 setEvents(data.events || []);
             }
         } catch (e: any) {
-            if (e.status_code === 401 || e.status_code === 404) {
+            // Check if error message indicates not connected
+            const errMsg = (e.message || '').toLowerCase();
+            if (e.status_code === 401 || 
+                e.status_code === 404 || 
+                errMsg.includes('not connected') ||
+                errMsg.includes('not authorized') ||
+                errMsg.includes('connect your account')) {
                 setConnected(false);
-                setError('Connect your Google Calendar to see events');
             } else {
                 setError(e.message || 'Failed to fetch events');
             }
