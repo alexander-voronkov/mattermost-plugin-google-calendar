@@ -92,6 +92,16 @@ const CalendarRHS: React.FC = () => {
         fetchEvents(view);
     }, [view, fetchEvents]);
 
+    // Re-fetch when window regains focus (e.g., after OAuth in new tab)
+    useEffect(() => {
+        const handleFocus = () => {
+            // Small delay to allow OAuth redirect to complete
+            setTimeout(() => fetchEvents(view), 500);
+        };
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [view, fetchEvents]);
+
     const getViewTitle = (): string => {
         const today = new Date();
         switch (view) {
@@ -123,7 +133,7 @@ const CalendarRHS: React.FC = () => {
                 height: '100%',
                 backgroundColor: 'var(--center-channel-bg)',
             }}>
-                <ConnectScreen onConnect={handleConnect} />
+                <ConnectScreen onConnect={handleConnect} onRefresh={() => fetchEvents(view)} />
             </div>
         );
     }
@@ -395,9 +405,10 @@ const GoogleCalendarLogo: React.FC = () => (
 // Connect Screen Component
 interface ConnectScreenProps {
     onConnect: () => void;
+    onRefresh?: () => void;
 }
 
-const ConnectScreen: React.FC<ConnectScreenProps> = ({onConnect}) => (
+const ConnectScreen: React.FC<ConnectScreenProps> = ({onConnect, onRefresh}) => (
     <div style={{
         display: 'flex',
         flexDirection: 'column',
@@ -465,12 +476,32 @@ const ConnectScreen: React.FC<ConnectScreenProps> = ({onConnect}) => (
         </button>
         
         <p style={{
-            marginTop: '20px',
-            fontSize: '11px',
-            color: 'var(--center-channel-color-40)',
+            marginTop: '16px',
+            fontSize: '12px',
+            color: 'var(--center-channel-color-48)',
+            lineHeight: 1.5,
         }}>
-            Opens in a new browser tab
+            Opens in a new browser tab.<br/>
+            Return here after signing in.
         </p>
+        
+        {onRefresh && (
+            <button
+                onClick={onRefresh}
+                style={{
+                    marginTop: '16px',
+                    padding: '8px 16px',
+                    backgroundColor: 'transparent',
+                    color: 'var(--button-bg)',
+                    border: '1px solid var(--button-bg)',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                }}
+            >
+                🔄 Already connected? Refresh
+            </button>
+        )}
     </div>
 );
 
