@@ -25,10 +25,10 @@ import (
 // Plugin wraps the base mscalendar plugin to add events API
 type Plugin struct {
 	*baseplugin.Plugin
-	
-	envLock     sync.RWMutex
-	eventsAPI   *gcal.EventsAPIHandler
-	env         engine.Env
+
+	envLock   sync.RWMutex
+	eventsAPI *gcal.EventsAPIHandler
+	env       engine.Env
 }
 
 // NewPlugin creates a new plugin instance
@@ -45,12 +45,12 @@ func (p *Plugin) OnActivate() error {
 	if err != nil {
 		return err
 	}
-	
+
 	// Initialize events API handler
 	p.envLock.Lock()
 	p.eventsAPI = gcal.NewEventsAPIHandler(p.env)
 	p.envLock.Unlock()
-	
+
 	return nil
 }
 
@@ -60,12 +60,12 @@ func (p *Plugin) OnConfigurationChange() error {
 	if err != nil {
 		return err
 	}
-	
+
 	// Update events API handler with new env
 	p.envLock.Lock()
 	p.eventsAPI = gcal.NewEventsAPIHandler(p.env)
 	p.envLock.Unlock()
-	
+
 	return nil
 }
 
@@ -109,30 +109,30 @@ func (p *Plugin) handleOAuth2Connect(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate auth URL with prompt=consent to always get refresh token
-	url := conf.AuthCodeURL(state, 
+	url := conf.AuthCodeURL(state,
 		oauth2.AccessTypeOffline,
 		oauth2.SetAuthURLParam("prompt", "consent"),
 	)
-	
+
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
 // ServeHTTP handles HTTP requests
 func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
-	
+
 	// Intercept OAuth connect to add prompt=consent for refresh token
 	if path == "/oauth2/connect" {
 		p.handleOAuth2Connect(w, r)
 		return
 	}
-	
+
 	// Handle events API routes
 	if strings.HasPrefix(path, "/api/v1/events") {
 		p.envLock.RLock()
 		handler := p.eventsAPI
 		p.envLock.RUnlock()
-		
+
 		if handler != nil {
 			switch path {
 			case "/api/v1/events":
@@ -158,7 +158,7 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 			}
 		}
 	}
-	
+
 	// Delegate to base plugin for all other routes
 	p.Plugin.ServeHTTP(c, w, r)
 }
