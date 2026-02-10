@@ -5,7 +5,7 @@ import React from 'react';
 import {shallow} from 'enzyme';
 import 'jest-environment-jsdom';
 
-import CalendarRHS, {EventCard} from './calendar_rhs';
+import {EventCard} from './calendar_rhs';
 
 // Mock the react-redux useDispatch hook
 jest.mock('react-redux', () => ({
@@ -437,7 +437,7 @@ describe('CalendarRHS Conference Icons', () => {
                 isAllDay: false,
             };
 
-            const wrapper = shallow(<EventCard event={event} showDate={true}/>);
+            const wrapper = shallow(<EventCard event={event}/>);
 
             expect(wrapper.exists()).toBe(true);
         });

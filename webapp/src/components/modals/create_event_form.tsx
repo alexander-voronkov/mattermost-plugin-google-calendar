@@ -168,7 +168,7 @@ export default function CreateEventForm(props: Props) {
 
 type ActualFormProps = {
     formValues: CreateEventPayload;
-    setFormValue: <Key extends keyof CreateEventPayload>(name: Key, value: CreateEventPayload[Key]) => Promise<{ error?: string }>;
+    setFormValue: <Key extends keyof CreateEventPayload>(name: Key, value: CreateEventPayload[Key]) => void;
 }
 
 // Calculate time + 30 minutes
