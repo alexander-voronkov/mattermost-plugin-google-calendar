@@ -181,7 +181,7 @@ const CalendarRHS: React.FC = () => {
                 }}
             >
                 <h3 style={{margin: 0, fontSize: '16px', fontWeight: 600}}>
-                    📅 {getViewTitle()}
+                    {'📅'} {getViewTitle()}
                 </h3>
                 <button
                     onClick={() => fetchEvents(view)}
@@ -238,8 +238,8 @@ const CalendarRHS: React.FC = () => {
             >
                 {loading && (
                     <div style={{textAlign: 'center', padding: '32px', color: 'var(--center-channel-color-56)'}}>
-                        <div style={{fontSize: '24px', marginBottom: '8px'}}>⏳</div>
-                        Loading events...
+                        <div style={{fontSize: '24px', marginBottom: '8px'}}>{'⏳'}</div>
+                        {'Loading events...'}
                     </div>
                 )}
 
@@ -266,12 +266,18 @@ const CalendarRHS: React.FC = () => {
                             color: 'var(--center-channel-color-56)',
                         }}
                     >
-                        <div style={{fontSize: '48px', marginBottom: '12px'}}>🎉</div>
-                        <div style={{fontSize: '14px', fontWeight: 500}}>No events</div>
+                        <div style={{fontSize: '48px', marginBottom: '12px'}}>{'🎉'}</div>
+                        <div style={{fontSize: '14px', fontWeight: 500}}>{'No events'}</div>
                         <div style={{fontSize: '13px', marginTop: '4px'}}>
-                            {view === 'today' ? 'Your day is free!' :
-                                view === 'tomorrow' ? 'Tomorrow is clear!' :
-                                    'Nothing scheduled this week'}
+                            {(() => {
+                                if (view === 'today') {
+                                    return 'Your day is free!';
+                                }
+                                if (view === 'tomorrow') {
+                                    return 'Tomorrow is clear!';
+                                }
+                                return 'Nothing scheduled this week';
+                            })()}
                         </div>
                     </div>
                 )}
@@ -316,8 +322,8 @@ const CalendarRHS: React.FC = () => {
                             gap: '8px',
                         }}
                     >
-                        <span>➕</span>
-                        <span>Create Meeting</span>
+                        <span>{'➕'}</span>
+                        <span>{'Create Meeting'}</span>
                     </button>
                 </div>
             )}
@@ -355,11 +361,11 @@ const EventCard: React.FC<EventCardProps> = ({event, showDate}) => {
                     marginBottom: '6px',
                 }}
             >
-                <span>🕐</span>
+                <span>{'🕐'}</span>
                 <span>{event.isAllDay ? 'All day' : `${startTime} - ${endTime}`}</span>
                 {showDate && (
                     <>
-                        <span style={{color: 'var(--center-channel-color-24)'}}>•</span>
+                        <span style={{color: 'var(--center-channel-color-24)'}}>{'•'}</span>
                         <span>{formatDate(event.start)}</span>
                     </>
                 )}
@@ -401,7 +407,7 @@ const EventCard: React.FC<EventCardProps> = ({event, showDate}) => {
                         color: 'var(--center-channel-color-56)',
                     }}
                 >
-                    <span>📍</span>
+                    <span>{'📍'}</span>
                     <span>{event.location}</span>
                 </div>
             )}
@@ -429,7 +435,7 @@ const EventCard: React.FC<EventCardProps> = ({event, showDate}) => {
                         <span style={{display: 'inline-flex', alignItems: 'center', width: '16px', height: '16px'}}>
                             {conferenceType === 'generic' ? '🎥' : <ConferenceIcon type={conferenceType}/>}
                         </span>
-                        <span>Join Meeting</span>
+                        <span>{'Join Meeting'}</span>
                     </a>
                 </div>
             )}
@@ -670,7 +676,7 @@ const ConnectScreen: React.FC<ConnectScreenProps> = ({onConnect, onRefresh}) => 
                 color: 'var(--center-channel-color)',
             }}
         >
-            Google Calendar
+            {'Google Calendar'}
         </h3>
 
         <p
@@ -681,7 +687,7 @@ const ConnectScreen: React.FC<ConnectScreenProps> = ({onConnect, onRefresh}) => 
                 lineHeight: 1.5,
             }}
         >
-            View your upcoming events, create meetings, and stay organized — all within Mattermost.
+            {'View your upcoming events, create meetings, and stay organized — all within Mattermost.'}
         </p>
 
         <p
@@ -691,7 +697,7 @@ const ConnectScreen: React.FC<ConnectScreenProps> = ({onConnect, onRefresh}) => 
                 color: 'var(--center-channel-color-48)',
             }}
         >
-            Connect your Google account to get started.
+            {'Connect your Google account to get started.'}
         </p>
 
         <button
@@ -711,8 +717,12 @@ const ConnectScreen: React.FC<ConnectScreenProps> = ({onConnect, onRefresh}) => 
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 transition: 'background-color 0.2s',
             }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#3367D6'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4285F4'}
+            onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#3367D6';
+            }}
+            onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#4285F4';
+            }}
         >
             <svg
                 width='18'
@@ -738,7 +748,7 @@ const ConnectScreen: React.FC<ConnectScreenProps> = ({onConnect, onRefresh}) => 
                     fill='#EA4335'
                 />
             </svg>
-            Sign in with Google
+            {'Sign in with Google'}
         </button>
 
         <p
@@ -749,8 +759,8 @@ const ConnectScreen: React.FC<ConnectScreenProps> = ({onConnect, onRefresh}) => 
                 lineHeight: 1.5,
             }}
         >
-            Opens in a new browser tab.<br/>
-            Return here after signing in.
+            {'Opens in a new browser tab.'}<br/>
+            {'Return here after signing in.'}
         </p>
 
         {onRefresh && (
@@ -767,7 +777,7 @@ const ConnectScreen: React.FC<ConnectScreenProps> = ({onConnect, onRefresh}) => 
                     fontSize: '13px',
                 }}
             >
-                🔄 Already connected? Refresh
+                {'🔄 Already connected? Refresh'}
             </button>
         )}
     </div>

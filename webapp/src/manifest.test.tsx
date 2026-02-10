@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import manifest from './manifest';
 
 test('Plugin manifest, id and version are defined', () => {
