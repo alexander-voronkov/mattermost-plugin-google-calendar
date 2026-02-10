@@ -77,11 +77,11 @@ export default function CreateEventForm(props: Props) {
         }
 
         // Auto-fill end_time if empty (start + 30 min)
-        let submitValues = {...formValues};
+        const submitValues = {...formValues};
         if (!submitValues.end_time && submitValues.start_time) {
             const [hours, minutes] = submitValues.start_time.split(':').map(Number);
             if (!isNaN(hours) && !isNaN(minutes)) {
-                const endMinutes = (hours * 60 + minutes + 30) % (24 * 60);
+                const endMinutes = ((hours * 60) + minutes + 30) % (24 * 60);
                 const endHours = Math.floor(endMinutes / 60);
                 const endMins = endMinutes % 60;
                 submitValues.end_time = `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
@@ -173,10 +173,14 @@ type ActualFormProps = {
 
 // Calculate time + 30 minutes
 const calcEndTime = (startTime: string): string => {
-    if (!startTime || !startTime.includes(':')) return '';
+    if (!startTime || !startTime.includes(':')) {
+        return '';
+    }
     const [hours, minutes] = startTime.split(':').map(Number);
-    if (isNaN(hours) || isNaN(minutes)) return '';
-    const endMinutes = (hours * 60 + minutes + 30) % (24 * 60);
+    if (isNaN(hours) || isNaN(minutes)) {
+        return '';
+    }
+    const endMinutes = ((hours * 60) + minutes + 30) % (24 * 60);
     const endHours = Math.floor(endMinutes / 60);
     const endMins = endMinutes % 60;
     return `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
@@ -189,9 +193,16 @@ const ActualForm = (props: ActualFormProps) => {
     const suggestedEndTime = calcEndTime(formValues.start_time);
 
     return (
-        <div className='mscalendar-create-event-form' style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <div
+            className='mscalendar-create-event-form'
+            style={{display: 'flex', flexDirection: 'column', gap: '10px'}}
+        >
             {/* Subject */}
-            <Setting label='Subject' inputId='subject' required={true}>
+            <Setting
+                label='Subject'
+                inputId='subject'
+                required={true}
+            >
                 <input
                     id='subject'
                     onChange={(e) => setFormValue('subject', e.target.value)}
@@ -205,8 +216,11 @@ const ActualForm = (props: ActualFormProps) => {
             {/* Date & Time Row */}
             <div style={{display: 'flex', gap: '8px', alignItems: 'flex-end', flexWrap: 'wrap'}}>
                 <div style={{flex: '1 1 130px', minWidth: '130px'}}>
-                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '13px'}}>
-                        Date <span className='error-text'>*</span>
+                    <label
+                        className='control-label'
+                        style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '13px'}}
+                    >
+                        {'Date'} <span className='error-text'>{'*'}</span>
                     </label>
                     <input
                         onChange={(e) => setFormValue('date', e.target.value)}
@@ -218,8 +232,11 @@ const ActualForm = (props: ActualFormProps) => {
                     />
                 </div>
                 <div style={{flex: '0 0 95px'}}>
-                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '13px'}}>
-                        Start <span className='error-text'>*</span>
+                    <label
+                        className='control-label'
+                        style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '13px'}}
+                    >
+                        {'Start'} <span className='error-text'>{'*'}</span>
                     </label>
                     <input
                         type='time'
@@ -229,13 +246,17 @@ const ActualForm = (props: ActualFormProps) => {
                         style={{height: '36px', colorScheme: 'dark'}}
                     />
                 </div>
-                <span style={{paddingBottom: '8px', color: 'var(--center-channel-color-56)'}}>–</span>
+                <span style={{paddingBottom: '8px', color: 'var(--center-channel-color-56)'}}>{'–'}</span>
                 <div style={{flex: '0 0 95px'}}>
-                    <label className='control-label' style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '13px'}}>
-                        End {!formValues.end_time && suggestedEndTime ? (
-                            <span style={{fontWeight: 400, opacity: 0.5, fontSize: '11px'}}>({suggestedEndTime})</span>
+                    <label
+                        className='control-label'
+                        style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', fontSize: '13px'}}
+                    >
+                        {'End'}
+                        {!formValues.end_time && suggestedEndTime ? (
+                            <span style={{fontWeight: 400, opacity: 0.5, fontSize: '11px'}}>{`(${suggestedEndTime})`}</span>
                         ) : (
-                            <span className='error-text'>*</span>
+                            <span className='error-text'>{'*'}</span>
                         )}
                     </label>
                     <input
@@ -244,20 +265,26 @@ const ActualForm = (props: ActualFormProps) => {
                         value={formValues.end_time}
                         className='form-control'
                         style={{height: '36px', colorScheme: 'dark'}}
-                        min={formValues.start_time || undefined}
+                        min={formValues.start_time || ''}
                     />
                 </div>
             </div>
 
             {/* Guests */}
-            <Setting label='Guests' inputId='guests'>
+            <Setting
+                label='Guests'
+                inputId='guests'
+            >
                 <AttendeeSelector
                     onChange={(selected) => setFormValue('attendees', selected)}
                 />
             </Setting>
 
             {/* Description */}
-            <Setting label='Description' inputId='description'>
+            <Setting
+                label='Description'
+                inputId='description'
+            >
                 <textarea
                     id='description'
                     onChange={(e) => setFormValue('description', e.target.value)}
@@ -270,34 +297,39 @@ const ActualForm = (props: ActualFormProps) => {
             </Setting>
 
             {/* Channel Link */}
-            <Setting label='Link to channel' inputId='channel'>
+            <Setting
+                label='Link to channel'
+                inputId='channel'
+            >
                 <ChannelSelector
                     onChange={(selected) => setFormValue('channel_id', selected)}
                 />
             </Setting>
 
             {/* Mattermost Call checkbox */}
-            <div style={{
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px',
-                padding: '8px 10px',
-                backgroundColor: 'var(--center-channel-color-04)',
-                borderRadius: '4px',
-                border: '1px solid var(--center-channel-color-08)',
-            }}>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 10px',
+                    backgroundColor: 'var(--center-channel-color-04)',
+                    borderRadius: '4px',
+                    border: '1px solid var(--center-channel-color-08)',
+                }}
+            >
                 <input
-                    type="checkbox"
-                    id="add_mattermost_call"
+                    type='checkbox'
+                    id='add_mattermost_call'
                     checked={formValues.add_mattermost_call || false}
                     onChange={(e) => setFormValue('add_mattermost_call', e.target.checked)}
                     style={{width: '18px', height: '18px', cursor: 'pointer', flexShrink: 0}}
                 />
-                <label 
-                    htmlFor="add_mattermost_call" 
+                <label
+                    htmlFor='add_mattermost_call'
                     style={{cursor: 'pointer', fontSize: '14px', margin: 0}}
                 >
-                    📞 Add Mattermost Call link
+                    {'📞 Add Mattermost Call link'}
                 </label>
             </div>
         </div>

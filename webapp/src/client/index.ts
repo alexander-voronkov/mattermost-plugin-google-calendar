@@ -22,7 +22,7 @@ export const doFetchWithResponse = async (url: string, options: Options = {}) =>
 
     // Extract error message from response data
     const errorMessage = data?.error || data?.message || (typeof data === 'string' ? data : JSON.stringify(data)) || '';
-    
+
     throw new ClientError(Client4.url, {
         message: errorMessage,
         status_code: response.status,

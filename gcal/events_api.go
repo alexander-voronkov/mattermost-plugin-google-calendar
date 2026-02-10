@@ -37,16 +37,16 @@ type EventDTO struct {
 
 // CreateEventRequest is the request body for creating an event
 type CreateEventRequest struct {
-	Subject            string   `json:"subject"`
-	AllDay             bool     `json:"all_day"`
-	Attendees          []string `json:"attendees"`
-	Date               string   `json:"date"`
-	StartTime          string   `json:"start_time"`
-	EndTime            string   `json:"end_time"`
-	Description        string   `json:"description"`
-	Location           string   `json:"location"`
-	ChannelID          string   `json:"channel_id"`
-	AddMattermostCall  bool     `json:"add_mattermost_call"`
+	Subject           string   `json:"subject"`
+	AllDay            bool     `json:"all_day"`
+	Attendees         []string `json:"attendees"`
+	Date              string   `json:"date"`
+	StartTime         string   `json:"start_time"`
+	EndTime           string   `json:"end_time"`
+	Description       string   `json:"description"`
+	Location          string   `json:"location"`
+	ChannelID         string   `json:"channel_id"`
+	AddMattermostCall bool     `json:"add_mattermost_call"`
 }
 
 // CreateEventResponse is the response for creating an event
@@ -231,7 +231,7 @@ func (h *EventsAPIHandler) HandleCreateEvent(w http.ResponseWriter, r *http.Requ
 		} else {
 			callLink = fmt.Sprintf("%s/plugins/com.fambear.calls/new", siteURL)
 		}
-		
+
 		// Add call link to description
 		if description != "" {
 			description = description + "\n\n"
@@ -269,7 +269,7 @@ func (h *EventsAPIHandler) HandleCreateEvent(w http.ResponseWriter, r *http.Requ
 	// Create the event using the engine
 	mscal := engine.New(h.Env, mattermostUserID)
 	user := engine.NewUser(mattermostUserID)
-	
+
 	// Pass attendee Mattermost user IDs for notifications
 	createdEvent, err := mscal.CreateEvent(user, event, req.Attendees)
 	if err != nil {

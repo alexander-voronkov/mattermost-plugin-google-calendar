@@ -1,0 +1,409 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CalendarRHS Conference Icons Icon Component Snapshots EventCard with Google Meet conference matches snapshot 1`] = `
+<div
+  style={
+    {
+      "backgroundColor": "var(--center-channel-color-04)",
+      "border": "1px solid var(--center-channel-color-08)",
+      "borderRadius": "8px",
+      "padding": "12px",
+    }
+  }
+>
+  <div
+    style={
+      {
+        "alignItems": "center",
+        "color": "var(--center-channel-color-56)",
+        "display": "flex",
+        "fontSize": "12px",
+        "gap": "6px",
+        "marginBottom": "6px",
+      }
+    }
+  >
+    <span>
+      🕐
+    </span>
+    <span>
+      05:00 PM - 06:00 PM
+    </span>
+  </div>
+  <div
+    style={
+      {
+        "fontSize": "14px",
+        "fontWeight": 600,
+        "marginBottom": "6px",
+      }
+    }
+  >
+    <span>
+      Test Event
+    </span>
+  </div>
+  <div
+    style={
+      {
+        "marginTop": "8px",
+      }
+    }
+  >
+    <a
+      href="https://meet.google.com/abc-defg-hij"
+      rel="noopener noreferrer"
+      style={
+        {
+          "alignItems": "center",
+          "backgroundColor": "var(--button-bg)",
+          "borderRadius": "4px",
+          "color": "var(--button-color)",
+          "display": "inline-flex",
+          "fontSize": "12px",
+          "fontWeight": 500,
+          "gap": "6px",
+          "padding": "6px 12px",
+          "textDecoration": "none",
+        }
+      }
+      target="_blank"
+    >
+      <span
+        style={
+          {
+            "alignItems": "center",
+            "display": "inline-flex",
+            "height": "16px",
+            "width": "16px",
+          }
+        }
+      >
+        <ConferenceIcon
+          type="google-meet"
+        />
+      </span>
+      <span>
+        Join Meeting
+      </span>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`CalendarRHS Conference Icons Icon Component Snapshots EventCard with Mattermost conference matches snapshot 1`] = `
+<div
+  style={
+    {
+      "backgroundColor": "var(--center-channel-color-04)",
+      "border": "1px solid var(--center-channel-color-08)",
+      "borderRadius": "8px",
+      "padding": "12px",
+    }
+  }
+>
+  <div
+    style={
+      {
+        "alignItems": "center",
+        "color": "var(--center-channel-color-56)",
+        "display": "flex",
+        "fontSize": "12px",
+        "gap": "6px",
+        "marginBottom": "6px",
+      }
+    }
+  >
+    <span>
+      🕐
+    </span>
+    <span>
+      05:00 PM - 06:00 PM
+    </span>
+  </div>
+  <div
+    style={
+      {
+        "fontSize": "14px",
+        "fontWeight": 600,
+        "marginBottom": "6px",
+      }
+    }
+  >
+    <span>
+      Test Event
+    </span>
+  </div>
+  <div
+    style={
+      {
+        "marginTop": "8px",
+      }
+    }
+  >
+    <a
+      href="https://mm.example.com/call/test"
+      rel="noopener noreferrer"
+      style={
+        {
+          "alignItems": "center",
+          "backgroundColor": "var(--button-bg)",
+          "borderRadius": "4px",
+          "color": "var(--button-color)",
+          "display": "inline-flex",
+          "fontSize": "12px",
+          "fontWeight": 500,
+          "gap": "6px",
+          "padding": "6px 12px",
+          "textDecoration": "none",
+        }
+      }
+      target="_blank"
+    >
+      <span
+        style={
+          {
+            "alignItems": "center",
+            "display": "inline-flex",
+            "height": "16px",
+            "width": "16px",
+          }
+        }
+      >
+        <ConferenceIcon
+          type="mattermost"
+        />
+      </span>
+      <span>
+        Join Meeting
+      </span>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`CalendarRHS Conference Icons Icon Component Snapshots EventCard with Zoom conference matches snapshot 1`] = `
+<div
+  style={
+    {
+      "backgroundColor": "var(--center-channel-color-04)",
+      "border": "1px solid var(--center-channel-color-08)",
+      "borderRadius": "8px",
+      "padding": "12px",
+    }
+  }
+>
+  <div
+    style={
+      {
+        "alignItems": "center",
+        "color": "var(--center-channel-color-56)",
+        "display": "flex",
+        "fontSize": "12px",
+        "gap": "6px",
+        "marginBottom": "6px",
+      }
+    }
+  >
+    <span>
+      🕐
+    </span>
+    <span>
+      05:00 PM - 06:00 PM
+    </span>
+  </div>
+  <div
+    style={
+      {
+        "fontSize": "14px",
+        "fontWeight": 600,
+        "marginBottom": "6px",
+      }
+    }
+  >
+    <span>
+      Test Event
+    </span>
+  </div>
+  <div
+    style={
+      {
+        "marginTop": "8px",
+      }
+    }
+  >
+    <a
+      href="https://zoom.us/j/123456789"
+      rel="noopener noreferrer"
+      style={
+        {
+          "alignItems": "center",
+          "backgroundColor": "var(--button-bg)",
+          "borderRadius": "4px",
+          "color": "var(--button-color)",
+          "display": "inline-flex",
+          "fontSize": "12px",
+          "fontWeight": 500,
+          "gap": "6px",
+          "padding": "6px 12px",
+          "textDecoration": "none",
+        }
+      }
+      target="_blank"
+    >
+      <span
+        style={
+          {
+            "alignItems": "center",
+            "display": "inline-flex",
+            "height": "16px",
+            "width": "16px",
+          }
+        }
+      >
+        <ConferenceIcon
+          type="zoom"
+        />
+      </span>
+      <span>
+        Join Meeting
+      </span>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`CalendarRHS Conference Icons Icon Component Snapshots EventCard with generic conference matches snapshot 1`] = `
+<div
+  style={
+    {
+      "backgroundColor": "var(--center-channel-color-04)",
+      "border": "1px solid var(--center-channel-color-08)",
+      "borderRadius": "8px",
+      "padding": "12px",
+    }
+  }
+>
+  <div
+    style={
+      {
+        "alignItems": "center",
+        "color": "var(--center-channel-color-56)",
+        "display": "flex",
+        "fontSize": "12px",
+        "gap": "6px",
+        "marginBottom": "6px",
+      }
+    }
+  >
+    <span>
+      🕐
+    </span>
+    <span>
+      05:00 PM - 06:00 PM
+    </span>
+  </div>
+  <div
+    style={
+      {
+        "fontSize": "14px",
+        "fontWeight": 600,
+        "marginBottom": "6px",
+      }
+    }
+  >
+    <span>
+      Test Event
+    </span>
+  </div>
+  <div
+    style={
+      {
+        "marginTop": "8px",
+      }
+    }
+  >
+    <a
+      href="https://teams.microsoft.com/l/meetup/join"
+      rel="noopener noreferrer"
+      style={
+        {
+          "alignItems": "center",
+          "backgroundColor": "var(--button-bg)",
+          "borderRadius": "4px",
+          "color": "var(--button-color)",
+          "display": "inline-flex",
+          "fontSize": "12px",
+          "fontWeight": 500,
+          "gap": "6px",
+          "padding": "6px 12px",
+          "textDecoration": "none",
+        }
+      }
+      target="_blank"
+    >
+      <span
+        style={
+          {
+            "alignItems": "center",
+            "display": "inline-flex",
+            "height": "16px",
+            "width": "16px",
+          }
+        }
+      >
+        🎥
+      </span>
+      <span>
+        Join Meeting
+      </span>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`CalendarRHS Conference Icons Icon Component Snapshots EventCard without conference matches snapshot 1`] = `
+<div
+  style={
+    {
+      "backgroundColor": "var(--center-channel-color-04)",
+      "border": "1px solid var(--center-channel-color-08)",
+      "borderRadius": "8px",
+      "padding": "12px",
+    }
+  }
+>
+  <div
+    style={
+      {
+        "alignItems": "center",
+        "color": "var(--center-channel-color-56)",
+        "display": "flex",
+        "fontSize": "12px",
+        "gap": "6px",
+        "marginBottom": "6px",
+      }
+    }
+  >
+    <span>
+      🕐
+    </span>
+    <span>
+      05:00 PM - 06:00 PM
+    </span>
+  </div>
+  <div
+    style={
+      {
+        "fontSize": "14px",
+        "fontWeight": 600,
+        "marginBottom": 0,
+      }
+    }
+  >
+    <span>
+      Test Event
+    </span>
+  </div>
+</div>
+`;
